@@ -36,75 +36,89 @@ class _RegsiterViewState extends State<RegsiterView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Username
-        TextField(
-          controller: _email,
-          obscureText: false,
-          enableSuggestions: true,
-          autocorrect: false,
-          decoration: const InputDecoration(
-            hintText: 'Enter your Email',
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Register View"),
+      ),
+      
+      body: Column(
+        children: [
+          // Username
+          TextField(
+            controller: _email,
+            obscureText: false,
+            enableSuggestions: true,
+            autocorrect: false,
+            decoration: const InputDecoration(
+              hintText: 'Enter your Email',
+            ),
           ),
-        ),
-        // Password
-        TextField(
-          controller: _password,
-          obscureText: true,
-          enableSuggestions: false,
-          autocorrect: false,
-          decoration: const InputDecoration(
-            hintText: 'Enter your Password',
+          // Password
+          TextField(
+            controller: _password,
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+            decoration: const InputDecoration(
+              hintText: 'Enter your Password',
+            ),
           ),
-        ),
-        // Register Button
-        TextButton(
-          onPressed: () async {
-            final email = _email.text;
-            final password = _password.text;
-
-            try {
-              final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                email: email, 
-                password: password
-              );
-              print(userCredential);
-
-              if (!mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Registration successful!")),
-              );
-
-            } on FirebaseAuthException catch (e) {
-              late String message;
-
-              if (e.code == 'weak-password') {
-                message = "Password must be at least 6 characters.";
-                print("Password must be at least 6 characters");
-
-              } else if(e.code == 'email-already-in-use') {
-                message = "Email already in use.";
-                print("Email already in use");
-              } else if (e.code == 'invalid-email') {
-                message = "Invalid Email";
-                print('Invalid Email');
-              } else {
-                message = "Something went very wrong";
-                print('Something went Very wrong');
+          // Register Button
+          TextButton(
+            onPressed: () async {
+              final email = _email.text;
+              final password = _password.text;
+      
+              try {
+                final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                  email: email, 
+                  password: password
+                );
+                print(userCredential);
+      
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Registration successful!")),
+                );
+      
+              } on FirebaseAuthException catch (e) {
+                late String message;
+      
+                if (e.code == 'weak-password') {
+                  message = "Password must be at least 6 characters.";
+                  print("Password must be at least 6 characters");
+      
+                } else if(e.code == 'email-already-in-use') {
+                  message = "Email already in use.";
+                  print("Email already in use");
+                } else if (e.code == 'invalid-email') {
+                  message = "Invalid Email";
+                  print('Invalid Email');
+                } else {
+                  message = "Something went very wrong";
+                  print('Something went Very wrong');
+                }
+      
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(message)),
+                );
+      
+                print(e.code);
               }
+      
+            },
+            child: const Text('Register')),
 
-              if (!mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(message)),
+            TextButton(onPressed: () {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+              '/login/', 
+              (route) => false
               );
-
-              print(e.code);
-            }
-
-          },
-          child: const Text('Register')),
-      ],
+            }, 
+            child: const Text('Login Here'))
+        ],
+      ),
     );
   }
 }
