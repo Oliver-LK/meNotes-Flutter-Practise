@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "859602726080",
+    "project_id": "menotes-oli",
+    "storage_bucket": "menotes-oli.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859602726080:android:0fef4152948f347fd6d125",
+        "android_client_info": {
+          "package_name": "nz.practiseapp.me_notes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6rD-8utTwxqbG2tpwPyZ5HdJoAluuUiA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
