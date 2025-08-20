@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:me_notes/firebase_options.dart';
+import 'dart:developer' as devtools show log;
 
 class RegsiterView extends StatefulWidget {
   const RegsiterView({super.key});
@@ -74,7 +75,7 @@ class _RegsiterViewState extends State<RegsiterView> {
                   email: email, 
                   password: password
                 );
-                print(userCredential);
+                devtools.log(userCredential.toString());
       
                 if (!mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -86,17 +87,17 @@ class _RegsiterViewState extends State<RegsiterView> {
       
                 if (e.code == 'weak-password') {
                   message = "Password must be at least 6 characters.";
-                  print("Password must be at least 6 characters");
+                  devtools.log("Password must be at least 6 characters");
       
                 } else if(e.code == 'email-already-in-use') {
                   message = "Email already in use.";
-                  print("Email already in use");
+                  devtools.log("Email already in use");
                 } else if (e.code == 'invalid-email') {
                   message = "Invalid Email";
-                  print('Invalid Email');
+                  devtools.log('Invalid Email');
                 } else {
                   message = "Something went very wrong";
-                  print('Something went Very wrong');
+                  devtools.log('Something went Very wrong');
                 }
       
                 if (!mounted) return;
@@ -104,7 +105,7 @@ class _RegsiterViewState extends State<RegsiterView> {
                   SnackBar(content: Text(message)),
                 );
       
-                print(e.code);
+                devtools.log(e.code);
               }
       
             },
