@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:me_notes/constants/routes.dart';
 import 'package:me_notes/firebase_options.dart';
 import 'dart:developer' as devtools show log;
 
@@ -69,15 +70,19 @@ class _LoginViewState extends State<LoginView> {
               final password = _password.text;
       
               try {
-                final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                await FirebaseAuth.instance.signInWithEmailAndPassword(
                   email: email, 
                   password: password
                 );
-                devtools.log(userCredential.toString());
       
                 if (!mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text("Login successful!")),
+                );
+
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  notesRoute, 
+                  (route) => false,
                 );
       
               } on FirebaseAuthException catch (e) {
@@ -116,7 +121,7 @@ class _LoginViewState extends State<LoginView> {
       
             TextButton(onPressed: () async {
               Navigator.of(context).pushNamedAndRemoveUntil(
-                '/register/', 
+                registerRoute, 
                 (route) => false,
               );
             }, 

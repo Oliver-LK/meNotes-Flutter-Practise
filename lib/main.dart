@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:me_notes/views/login_view.dart';
 import 'package:me_notes/views/register_view.dart';
 import 'package:me_notes/views/verify_email_view.dart';
+import 'package:me_notes/constants/routes.dart';
 import 'firebase_options.dart';
 import 'dart:developer' as devtools show log;
 
@@ -20,8 +21,9 @@ void main() {
       ),
       home: const HomePage(),
       routes: {
-        '/login/': (context) => const LoginView(),
-        '/register/': (context) => const RegsiterView(),
+        loginRoute: (context) => const LoginView(),
+        registerRoute: (context) => const RegsiterView(),
+        notesRoute: (context) => const NotesView(),
       },
     )
   );
@@ -33,7 +35,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Register Email and Password Feild
+    // Register Email and Password Felid
     return FutureBuilder(  // Future builder so Firebase init happens before everything else
       future: Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
@@ -87,14 +89,14 @@ class _NotesViewState extends State<NotesView> {
           PopupMenuButton <MenuAction>(
             onSelected: (value) async {
               devtools.log(value.toString());
-              
+
               switch (value) {
                 case MenuAction.logout:
                   final shouldLogout = await showLogOutDialog(context);
                   if (shouldLogout == true) {
                     await FirebaseAuth.instance.signOut();
                     Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/login/', 
+                      loginRoute, 
                       (_) => false
                     );
                   }
