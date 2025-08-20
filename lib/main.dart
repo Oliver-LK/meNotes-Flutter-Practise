@@ -79,6 +79,7 @@ class NotesView extends StatefulWidget {
 class _NotesViewState extends State<NotesView> {
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Notes'),
@@ -86,6 +87,7 @@ class _NotesViewState extends State<NotesView> {
           PopupMenuButton <MenuAction>(
             onSelected: (value) async {
               devtools.log(value.toString());
+              
               switch (value) {
                 case MenuAction.logout:
                   final shouldLogout = await showLogOutDialog(context);
@@ -98,6 +100,7 @@ class _NotesViewState extends State<NotesView> {
                   }
               }
             },
+
             itemBuilder: (context) {
               return const [
                 PopupMenuItem <MenuAction> (
@@ -118,10 +121,12 @@ Future<bool> showLogOutDialog(BuildContext context) {
   return showDialog(
     context: context, 
     builder: (context) {
+
       return AlertDialog(
         title: const Text('Sign Out'),
         content: const Text('Are you sure you want to log out?'),
         actions: [
+
           TextButton(onPressed: () {
             Navigator.of(context).pop(false);
           }, child: const Text('Cancel')),

@@ -107,7 +107,6 @@ class _RegsiterViewState extends State<RegsiterView> {
       
                 devtools.log(e.code);
               }
-      
             },
             child: const Text('Register')),
 

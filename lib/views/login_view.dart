@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:me_notes/firebase_options.dart';
+import 'dart:developer' as devtools show log;
 
 
 class LoginView extends StatefulWidget {
@@ -72,7 +73,7 @@ class _LoginViewState extends State<LoginView> {
                   email: email, 
                   password: password
                 );
-                print(userCredential);
+                devtools.log(userCredential.toString());
       
                 if (!mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -84,34 +85,32 @@ class _LoginViewState extends State<LoginView> {
       
                 if (e.code == 'invalid-credential') {
                   message = "User Not Found.";
-                  print("User Not Found");
+                  devtools.log("User Not Found");
       
                 } else if (e.code == 'wrong-password') {
                   message = "Wrong Password";
-                  print("Wrong Password");
+                  devtools.log("Wrong Password");
       
                 } else if (e.code == 'channel-error') {
                   message = "Please Enter Your Email & Password";
       
                 } else {
-                  print("Something else Happened");
+                  devtools.log("Something else Happened");
                   message = "Something Bad Happened.";
-                  print(e.code);
+                  devtools.log(e.code);
                 }
       
-                print(e.code);
+                devtools.log(e.code);
       
                 if (!mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(message)),
-      
               );
       
               } catch (e) {
-                print('Something Bad Happened');
-                print(e.runtimeType);
+                devtools.log('Something Bad Happened');
+                devtools.log(e.runtimeType.toString());
               }
-              
             },
             child: const Text('Login')),
       
@@ -121,7 +120,6 @@ class _LoginViewState extends State<LoginView> {
                 (route) => false,
               );
             }, 
-            
             child: const Text('Register Here'))
         ],
       ),
