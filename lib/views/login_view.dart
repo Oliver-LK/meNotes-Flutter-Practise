@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:me_notes/constants/error_names.dart';
 import 'package:me_notes/constants/routes.dart';
 import 'package:me_notes/firebase_options.dart';
 import 'dart:developer' as devtools show log;
+
+import 'package:me_notes/utilities/error_dialog.dart';
 
 
 class LoginView extends StatefulWidget {
@@ -89,28 +92,25 @@ class _LoginViewState extends State<LoginView> {
                 late String message;
       
                 if (e.code == 'invalid-credential') {
-                  message = "User Not Found.";
-                  devtools.log("User Not Found");
+                  message = "Invalid Credentials.";
       
                 } else if (e.code == 'wrong-password') {
                   message = "Wrong Password";
-                  devtools.log("Wrong Password");
       
                 } else if (e.code == 'channel-error') {
                   message = "Please Enter Your Email & Password";
-      
+
+                } else if (e.code == 'invalid-email') {
+                  message = "Invalid Email";
+
                 } else {
                   devtools.log("Something else Happened");
-                  message = "Something Bad Happened.";
+                  message = 'Error: ${e.code}';
                   devtools.log(e.code);
-                }
-      
+                } 
+                
+                showErrorDialog(context, message, loginErrorString);
                 devtools.log(e.code);
-      
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(message)),
-              );
       
               } catch (e) {
                 devtools.log('Something Bad Happened');

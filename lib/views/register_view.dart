@@ -3,9 +3,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:me_notes/constants/error_names.dart';
 import 'package:me_notes/constants/routes.dart';
 import 'package:me_notes/firebase_options.dart';
 import 'dart:developer' as devtools show log;
+
+import 'package:me_notes/utilities/error_dialog.dart';
 
 class RegsiterView extends StatefulWidget {
   const RegsiterView({super.key});
@@ -93,19 +96,21 @@ class _RegsiterViewState extends State<RegsiterView> {
                 } else if(e.code == 'email-already-in-use') {
                   message = "Email already in use.";
                   devtools.log("Email already in use");
+
                 } else if (e.code == 'invalid-email') {
                   message = "Invalid Email";
                   devtools.log('Invalid Email');
+
+                } else if (e.code == 'channel-error') {
+                  message = 'Please fill out your email and password';
+                  devtools.log("Email and password felids have been left blank");
+
                 } else {
-                  message = "Something went very wrong";
+                  message = 'Error: ${e.code}';
                   devtools.log('Something went Very wrong');
                 }
-      
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(message)),
-                );
-      
+
+                await showErrorDialog(context, message, registrationErrorString);
                 devtools.log(e.code);
               }
             },
