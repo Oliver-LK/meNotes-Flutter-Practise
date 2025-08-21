@@ -75,11 +75,15 @@ class _RegsiterViewState extends State<RegsiterView> {
               final password = _password.text;
       
               try {
-                final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
                   email: email, 
                   password: password
                 );
-                devtools.log(userCredential.toString());
+
+                final user = FirebaseAuth.instance.currentUser;
+                await user?.sendEmailVerification();
+
+                Navigator.of(context).pushNamed(verifyEmailRoute);
       
                 if (!mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -107,11 +111,17 @@ class _RegsiterViewState extends State<RegsiterView> {
 
                 } else {
                   message = 'Error: ${e.code}';
-                  devtools.log('Something went Very wrong');
+                  devtools.log('Firebase exception not handled');
                 }
 
                 await showErrorDialog(context, message, registrationErrorString);
                 devtools.log(e.code);
+
+              } catch (e) {
+                String message = 'Error: ${e}';
+                await showErrorDialog(context, message, registrationErrorString);
+                devtools.log('Some other exception occurred');
+                devtools.log(e.toString());
               }
             },
             child: const Text('Register')),
