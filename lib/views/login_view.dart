@@ -77,17 +77,24 @@ class _LoginViewState extends State<LoginView> {
                   email: email, 
                   password: password
                 );
+
+                final user = FirebaseAuth.instance.currentUser;
+
+                if (user?.emailVerified == true) {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                  notesRoute, 
+                  (route) => false);
+                } else {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                  verifyEmailRoute, 
+                  (route) => false);
+                }
       
                 if (!mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text("Login successful!")),
                 );
-
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  notesRoute, 
-                  (route) => false,
-                );
-      
+                
               } on FirebaseAuthException catch (e) {
                 late String message;
       
