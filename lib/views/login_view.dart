@@ -100,13 +100,10 @@ class _LoginViewState extends State<LoginView> {
               } on WrongPasswordAuthException {
                 await showErrorDialog(context, "Wrong Password", loginErrorString);
 
-              } on ChannelErrorAuthException {
-                 await showErrorDialog(context, "Please Enter Your Email & Password", loginErrorString);
-
               } on InvalidEmailAuthException {
                 await showErrorDialog(context, "Invalid Email", loginErrorString);
 
-              } on GenericsAuthException {
+              } on GenericAuthException {
                 await showErrorDialog(context, "Something else Happened", loginErrorString);
               }
             },

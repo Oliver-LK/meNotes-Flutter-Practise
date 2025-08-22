@@ -94,13 +94,10 @@ class _RegsiterViewState extends State<RegsiterView> {
               } on WeakPasswordAuthException {
                 await showErrorDialog(context, "Password must be at least 6 characters.", registrationErrorString);
 
-              } on ChannelErrorAuthException {
-                await showErrorDialog(context, 'Please fill out your email and password', registrationErrorString);
-
               } on InvalidEmailAuthException {
                 await showErrorDialog(context, "Invalid Email", registrationErrorString);
 
-              } on GenericsAuthException {
+              } on GenericAuthException {
                 await showErrorDialog(context, "Something else went wrong", registrationErrorString);
               }
               
