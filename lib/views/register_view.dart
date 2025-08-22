@@ -1,11 +1,10 @@
 
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:me_notes/constants/error_names.dart';
 import 'package:me_notes/constants/routes.dart';
-import 'package:me_notes/firebase_options.dart';
+import 'package:me_notes/services/auth/auth_exceptions.dart';
+import 'package:me_notes/services/auth/auth_service.dart';
 import 'dart:developer' as devtools show log;
 
 import 'package:me_notes/utilities/error_dialog.dart';
@@ -75,13 +74,12 @@ class _RegsiterViewState extends State<RegsiterView> {
               final password = _password.text;
       
               try {
-                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                await AuthService.firebase().createUser(
                   email: email, 
                   password: password
                 );
 
-                final user = FirebaseAuth.instance.currentUser;
-                await user?.sendEmailVerification();
+                await AuthService.firebase().sendEmailVerification();
 
                 Navigator.of(context).pushNamed(verifyEmailRoute);
       
@@ -90,39 +88,22 @@ class _RegsiterViewState extends State<RegsiterView> {
                 const SnackBar(content: Text("Registration successful!")),
                 );
       
-              } on FirebaseAuthException catch (e) {
-                late String message;
-      
-                if (e.code == 'weak-password') {
-                  message = "Password must be at least 6 characters.";
-                  devtools.log("Password must be at least 6 characters");
-      
-                } else if(e.code == 'email-already-in-use') {
-                  message = "Email already in use.";
-                  devtools.log("Email already in use");
+              } on EmailAlreadyInUseAuthException {
+                await showErrorDialog(context, "Email already in use.", registrationErrorString);
 
-                } else if (e.code == 'invalid-email') {
-                  message = "Invalid Email";
-                  devtools.log('Invalid Email');
+              } on WeakPasswordAuthException {
+                await showErrorDialog(context, "Password must be at least 6 characters.", registrationErrorString);
 
-                } else if (e.code == 'channel-error') {
-                  message = 'Please fill out your email and password';
-                  devtools.log("Email and password felids have been left blank");
+              } on ChannelErrorAuthException {
+                await showErrorDialog(context, 'Please fill out your email and password', registrationErrorString);
 
-                } else {
-                  message = 'Error: ${e.code}';
-                  devtools.log('Firebase exception not handled');
-                }
+              } on InvalidEmailAuthException {
+                await showErrorDialog(context, "Invalid Email", registrationErrorString);
 
-                await showErrorDialog(context, message, registrationErrorString);
-                devtools.log(e.code);
-
-              } catch (e) {
-                String message = 'Error: ${e}';
-                await showErrorDialog(context, message, registrationErrorString);
-                devtools.log('Some other exception occurred');
-                devtools.log(e.toString());
+              } on GenericsAuthException {
+                await showErrorDialog(context, "Something else went wrong", registrationErrorString);
               }
+              
             },
             child: const Text('Register')),
 

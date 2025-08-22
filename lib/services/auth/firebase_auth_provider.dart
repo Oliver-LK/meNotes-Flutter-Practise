@@ -1,3 +1,4 @@
+import 'package:me_notes/firebase_options.dart';
 import 'package:me_notes/services/auth/auth_provider.dart';
 import 'package:me_notes/services/auth/auth_user.dart';
 import 'package:me_notes/services/auth/auth_exceptions.dart';
@@ -8,6 +9,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'dart:developer' as devtools show log;
 
 class FirebaseAuthProvider implements AuthProvider {
+
+  @override
+  Future<void> initialize() async {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
+
   @override
   Future<AuthUser> createUser({
     required String email, 
@@ -37,7 +46,7 @@ class FirebaseAuthProvider implements AuthProvider {
 
         } else if (e.code == 'invalid-email') {
           devtools.log('Invalid Email');
-          throw InvalidEmailAuthExceptions();
+          throw InvalidEmailAuthException();
 
         } else if (e.code == 'channel-error') {
           devtools.log("Email and password felids have been left blank");
@@ -97,7 +106,7 @@ class FirebaseAuthProvider implements AuthProvider {
 
         } else if (e.code == 'invalid-email') {
           devtools.log(e.toString());
-          throw InvalidEmailAuthExceptions();
+          throw InvalidEmailAuthException();
 
         } else {
           devtools.log("Unhandled Auth Error");
@@ -134,6 +143,8 @@ class FirebaseAuthProvider implements AuthProvider {
       throw UserNotLoggedInAuthException();
     }
   }
+  
+  
   
 }
 

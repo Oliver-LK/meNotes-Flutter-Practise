@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:me_notes/constants/error_names.dart';
 import 'package:me_notes/constants/routes.dart';
-import 'package:me_notes/firebase_options.dart';
+import 'package:me_notes/services/auth/auth_exceptions.dart';
+import 'package:me_notes/services/auth/auth_service.dart';
 import 'dart:developer' as devtools show log;
 
 import 'package:me_notes/utilities/error_dialog.dart';
@@ -73,14 +72,14 @@ class _LoginViewState extends State<LoginView> {
               final password = _password.text;
       
               try {
-                await FirebaseAuth.instance.signInWithEmailAndPassword(
+                await AuthService.firebase().logIn(
                   email: email, 
                   password: password
                 );
 
-                final user = FirebaseAuth.instance.currentUser;
+                final user = AuthService.firebase().currentUser;
 
-                if (user?.emailVerified == true) {
+                if (user?.isEmailVerified == true) {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                   notesRoute, 
                   (route) => false);
@@ -95,33 +94,20 @@ class _LoginViewState extends State<LoginView> {
                 const SnackBar(content: Text("Login successful!")),
                 );
                 
-              } on FirebaseAuthException catch (e) {
-                late String message;
-      
-                if (e.code == 'invalid-credential') {
-                  message = "Invalid Credentials.";
-      
-                } else if (e.code == 'wrong-password') {
-                  message = "Wrong Password";
-      
-                } else if (e.code == 'channel-error') {
-                  message = "Please Enter Your Email & Password";
+              } on UserNotFoundAuthException {
+                await showErrorDialog(context, "Invalid Credentials.", loginErrorString);
 
-                } else if (e.code == 'invalid-email') {
-                  message = "Invalid Email";
+              } on WrongPasswordAuthException {
+                await showErrorDialog(context, "Wrong Password", loginErrorString);
 
-                } else {
-                  devtools.log("Something else Happened");
-                  message = 'Error: ${e.code}';
-                  devtools.log(e.code);
-                } 
-                
-                await showErrorDialog(context, message, loginErrorString);
-                devtools.log(e.code);
-      
-              } catch (e) {
-                devtools.log('Something Bad Happened');
-                devtools.log(e.runtimeType.toString());
+              } on ChannelErrorAuthException {
+                 await showErrorDialog(context, "Please Enter Your Email & Password", loginErrorString);
+
+              } on InvalidEmailAuthException {
+                await showErrorDialog(context, "Invalid Email", loginErrorString);
+
+              } on GenericsAuthException {
+                await showErrorDialog(context, "Something else Happened", loginErrorString);
               }
             },
             child: const Text('Login')),
